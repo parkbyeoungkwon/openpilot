@@ -152,6 +152,32 @@ def handle_fan_eon(max_cpu_temp, bat_temp, fan_speed, ignition):
   return fan_speed
 
 
+
+def check_car_battery_voltage(should_start, health, charging_disabled, msg):
+
+  # charging disallowed if:
+  #   - there are health packets from panda, and;
+  #   - 12V battery voltage is too low, and;
+  #   - onroad isn't started
+  print(health)
+  
+  if charging_disabled and (health is None or health.health.voltage > (int(11800)+500)) and msg.thermal.batteryPercent < int(60):
+    charging_disabled = False
+    os.system('echo "1" > /sys/class/power_supply/battery/charging_enabled')
+  elif not charging_disabled and (msg.thermal.batteryPercent > int(70) or (health is not None and health.health.voltage < int(11800) and not should_start)):
+    charging_disabled = True
+    os.system('echo "0" > /sys/class/power_supply/battery/charging_enabled')
+  elif msg.thermal.batteryCurrent < 0 and msg.thermal.batteryPercent > int(70):
+    charging_disabled = True
+    os.system('echo "0" > /sys/class/power_supply/battery/charging_enabled')
+
+  return charging_disabled
+
+
+
+
+
+
 def handle_fan_uno(max_cpu_temp, bat_temp, fan_speed, ignition):
   new_speed = int(interp(max_cpu_temp, [40.0, 80.0], [0, 80]))
 
