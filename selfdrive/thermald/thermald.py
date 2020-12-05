@@ -77,29 +77,6 @@ def read_thermal(thermal_config):
   return dat
 
 
-def check_car_battery_voltage(should_start, health, charging_disabled, msg):
-
-  # charging disallowed if:
-  #   - there are health packets from panda, and;
-  #   - 12V battery voltage is too low, and;
-  #   - onroad isn't started
-  print(health)
-  
-  if charging_disabled and (health is None or health.health.voltage > (int(11800)+500)) and msg.thermal.batteryPercent < int(60):
-    charging_disabled = False
-    os.system('echo "1" > /sys/class/power_supply/battery/charging_enabled')
-  elif not charging_disabled and (msg.thermal.batteryPercent > int(70) or (health is not None and health.health.voltage < int(11800) and not should_start)):
-    charging_disabled = True
-    os.system('echo "0" > /sys/class/power_supply/battery/charging_enabled')
-  elif msg.thermal.batteryCurrent < 0 and msg.thermal.batteryPercent > int(70):
-    charging_disabled = True
-    os.system('echo "0" > /sys/class/power_supply/battery/charging_enabled')
-
-  return charging_disabled
-
-
-
-
 def setup_eon_fan():
   global LEON
 
@@ -293,7 +270,7 @@ def thermald_thread():
 
     # Fake battery levels on uno for frame
     if (not EON) or is_uno:
-      msg.thermal.batteryPercent = 70
+      msg.thermal.batteryPercent = 100
       msg.thermal.batteryStatus = "Charging"
       msg.thermal.bat = 0
 
