@@ -77,8 +77,14 @@ def read_thermal(thermal_config):
   return dat
 
 
+def check_car_battery_voltage(should_start, health, charging_disabled, msg):
 
--------
+  # charging disallowed if:
+  #   - there are health packets from panda, and;
+  #   - 12V battery voltage is too low, and;
+  #   - onroad isn't started
+  print(health)
+  
   if charging_disabled and (health is None or health.health.voltage > (int(11800)+500)) and msg.thermal.batteryPercent < int(60):
     charging_disabled = False
     os.system('echo "1" > /sys/class/power_supply/battery/charging_enabled')
@@ -90,7 +96,7 @@ def read_thermal(thermal_config):
     os.system('echo "0" > /sys/class/power_supply/battery/charging_enabled')
 
   return charging_disabled
---------
+
 
 
 
@@ -109,6 +115,8 @@ def setup_eon_fan():
     print("LEON detected")
     LEON = True
   bus.close()
+
+
 
 
 def set_eon_fan(val):
