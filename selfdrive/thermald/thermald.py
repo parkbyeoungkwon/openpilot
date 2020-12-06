@@ -270,7 +270,7 @@ def thermald_thread():
 
     # Fake battery levels on uno for frame
     if (not EON) or is_uno:
-      msg.thermal.batteryPercent = 100
+      msg.thermal.batteryPercent = 70
       msg.thermal.batteryStatus = "Charging"
       msg.thermal.bat = 0
 
