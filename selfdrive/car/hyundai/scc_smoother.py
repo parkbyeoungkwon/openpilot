@@ -260,44 +260,21 @@ class SccSmoother:
       accel = op_accel
     else:
 
-      d = lead.dRel - 5.
+      d = lead.dRel - 5.      
+            
 
-      
-#munseongsik github start   
-      if 0. < d < -lead.vRel * (7.6872 + cruise_gap) * 2. and lead.vRel < -1.:
-        t = d / lead.vRel * 0.98
+      if 0. < d < -lead.vRel * (9. + cruise_gap) * 2. and lead.vRel < -1.:
+        t = d / lead.vRel
         acc = -(lead.vRel / t) * CV.MS_TO_KPH * 1.8
         override_acc = acc
         accel = (op_accel + acc) / 2.
-      else:        
-        accel = op_accel * interp(clu11_speed, [0., 20., 35., 50., 51., 60., 100.], [2.3, 3.28, 3.0, 1.7, 1.65, 1.4, 1.0])
-#        if 35 > lead.dRel > 15:
-#          if clu11_speed < 50:
-#            accel = op_accel * 2.5               
-#        else:
-#          accel = op_accel * interp(clu11_speed, [50., 60., 100.], [1.75, 1.4, 1.0])
-    if accel > 0.:
-      accel *= self.accel_gain * interp(clu11_speed, [35., 60., 100.], [1.5, 1.25, 1.2])
-    else:
-      accel *= self.decel_gain * interp(clu11_speed, [70., 75.], [1.79285, 1.8])      
-#munseongsik github end      
-      
-            
-#original start     
-      #if 0. < d < -lead.vRel * (9. + cruise_gap) * 2. and lead.vRel < -1.:
-        #t = d / lead.vRel
-        #acc = -(lead.vRel / t) * CV.MS_TO_KPH * 1.8
-        #override_acc = acc
-        #accel = (op_accel + acc) / 2.
-      #else:
-        #accel = op_accel
+      else:
+        accel = op_accel
 
-    #if accel > 0.:
-      #accel *= self.accel_gain * interp(clu11_speed, [30., 100.], [1.5, 1.2])
-    #else:
-      #accel *= self.decel_gain * 1.8
-#original end
-      
+    if accel > 0.:
+      accel *= self.accel_gain * interp(clu11_speed, [30., 100.], [1.5, 1.2])
+    else:
+      accel *= self.decel_gain * 1.8
       
     return clip(accel, -LIMIT_DECEL, LIMIT_ACCEL), override_acc
 
