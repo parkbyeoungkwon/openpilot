@@ -407,7 +407,7 @@ def thermald_thread():
       time.sleep(10)
 
     if msg.thermal.batteryPercent < BATT_PERC_OFF and msg.thermal.batteryStatus == "Discharging" and \
-       started_seen and (sec_since_boot() - off_ts) > 60:
+      started_seen and (sec_since_boot() - off_ts) > 60:
       os.system('LD_LIBRARY_PATH="" svc power shutdown')
 
 
