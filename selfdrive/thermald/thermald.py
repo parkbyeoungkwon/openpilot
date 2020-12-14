@@ -405,7 +405,13 @@ def thermald_thread():
       cloudlog.info(f"shutting device down, offroad since {off_ts}")
       # TODO: add function for blocking cloudlog instead of sleep
       time.sleep(10)
+
+    if msg.thermal.batteryPercent < BATT_PERC_OFF and msg.thermal.batteryStatus == "Discharging" and \
+       started_seen and (sec_since_boot() - off_ts) > 60:
       os.system('LD_LIBRARY_PATH="" svc power shutdown')
+
+
+      #os.system('LD_LIBRARY_PATH="" svc power shutdown')
 
     msg.thermal.chargingError = current_filter.x > 0. and msg.thermal.batteryPercent < 100  # if current is positive, then battery is being discharged
     msg.thermal.started = started_ts is not None
