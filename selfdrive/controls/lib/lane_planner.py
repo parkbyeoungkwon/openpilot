@@ -106,7 +106,7 @@ class LanePlanner:
     lr_prob = l_prob + r_prob - l_prob * r_prob
 
     # neokii
-    if lr_prob > 0.8:
+    if lr_prob > 0.65:
       lr_prob = min(lr_prob * 1.35, 1.0)
       
     #elif lr_prob > 0.4:
